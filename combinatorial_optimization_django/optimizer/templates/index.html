@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AlgoFusion - Advanced Multi-Strategy Optimization{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card shadow hero-card">
+            <div class="card-header text-white">
+                <div class="hero-content">
+                    <h1 class="hero-title mb-3">
+                        <span class="brand-icon">🧬</span>
+                        <span class="gradient-text">AlgoFusion</span>
+                    </h1>
+                    <p class="hero-subtitle">Advanced Multi-Strategy Optimization Platform</p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="intro-section mb-4">
+                    <p class="lead text-center mb-4">
+                        🚀 <strong>Unleash the power of algorithmic intelligence</strong> 🚀
+                    </p>
+                    <div class="row text-center">
+                        <div class="col-md-4 mb-3">
+                            <div class="feature-card p-3 rounded">
+                                <div class="problem-icon knapsack-icon"></div>
+                                <h6 class="text-glow">Knapsack Optimization</h6>
+                                <small class="text-secondary">Maximize value within constraints</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="feature-card p-3 rounded">
+                                <div class="problem-icon tsp-icon"></div>
+                                <h6 class="text-glow">TSP Solutions</h6>
+                                <small class="text-secondary">Optimal route planning</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="feature-card p-3 rounded">
+                                <div class="problem-icon matching-icon"></div>
+                                <h6 class="text-glow">Graph Matching</h6>
+                                <small class="text-secondary">Maximum weight connections</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <form method="post" enctype="multipart/form-data" id="optimizationForm">
+                    {% csrf_token %}
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="{{ form.problem_type.id_for_label }}" class="form-label">Problem Type</label>
+                            {{ form.problem_type }}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="{{ form.input_method.id_for_label }}" class="form-label">Input Method</label>
+                            {{ form.input_method }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Algorithms to Compare</label>
+                        <div class="row">
+                            {% for choice in form.algorithms %}
+                                <div class="col-md-4">
+                                    <div class="form-check">
+                                        {{ choice.tag }}
+                                        <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                            {{ choice.choice_label }}
+                                        </label>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Manual Input Fields -->
+                    <div id="manual-inputs" class="input-section">
+                        <h5 class="text-primary">Manual Input</h5>
+                        
+                        <!-- Knapsack Fields -->
+                        <div id="knapsack-fields" class="problem-fields">
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <label for="{{ form.weights.id_for_label }}" class="form-label">Weights</label>
+                                    {{ form.weights }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="{{ form.values.id_for_label }}" class="form-label">Values</label>
+                                    {{ form.values }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="{{ form.capacity.id_for_label }}" class="form-label">Capacity</label>
+                                    {{ form.capacity }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TSP Fields -->
+                        <div id="tsp-fields" class="problem-fields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="{{ form.cities.id_for_label }}" class="form-label">Cities (x,y coordinates)</label>
+                                {{ form.cities }}
+                                <div class="form-text">Enter coordinates as: x1,y1;x2,y2;x3,y3</div>
+                            </div>
+                        </div>
+
+                        <!-- Graph Matching Fields -->
+                        <div id="matching-fields" class="problem-fields" style="display: none;">
+                            <div class="mb-3">
+                                <label for="{{ form.edges.id_for_label }}" class="form-label">Edges (u,v,weight)</label>
+                                {{ form.edges }}
+                                <div class="form-text">Enter edges as: u1,v1,w1;u2,v2,w2;u3,v3,w3</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- File Upload -->
+                    <div id="file-inputs" class="input-section" style="display: none;">
+                        <h5 class="text-primary">File Upload</h5>
+                        <div class="mb-3">
+                            <label for="{{ form.data_file.id_for_label }}" class="form-label">Data File</label>
+                            {{ form.data_file }}
+                            <div class="form-text">{{ form.data_file.help_text }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Random Generation -->
+                    <div id="random-inputs" class="input-section" style="display: none;">
+                        <h5 class="text-primary">Random Generation</h5>
+                        <div class="mb-3">
+                            <label for="{{ form.random_size.id_for_label }}" class="form-label">Problem Size</label>
+                            {{ form.random_size }}
+                            <div class="form-text">{{ form.random_size.help_text }}</div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-play"></i> Run Optimization
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Examples Section -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0">Example Data Formats</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h6>Knapsack</h6>
+                        <small class="text-muted">
+                            Weights: 10,20,30<br>
+                            Values: 60,100,120<br>
+                            Capacity: 50
+                        </small>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>TSP</h6>
+                        <small class="text-muted">
+                            Cities: 0,0;10,10;20,5;15,20
+                        </small>
+                    </div>
+                    <div class="col-md-4">
+                        <h6>Graph Matching</h6>
+                        <small class="text-muted">
+                            Edges: 0,1,5;1,2,3;0,2,8;2,3,4
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleInputFields() {
+    const problemType = document.getElementById('id_problem_type').value;
+    const inputMethod = document.getElementById('id_input_method').value;
+    
+    // Hide all input sections
+    document.querySelectorAll('.input-section').forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // Hide all problem fields
+    document.querySelectorAll('.problem-fields').forEach(field => {
+        field.style.display = 'none';
+    });
+    
+    // Show appropriate input section
+    if (inputMethod === 'manual') {
+        document.getElementById('manual-inputs').style.display = 'block';
+        document.getElementById(problemType + '-fields').style.display = 'block';
+    } else if (inputMethod === 'file') {
+        document.getElementById('file-inputs').style.display = 'block';
+    } else if (inputMethod === 'random') {
+        document.getElementById('random-inputs').style.display = 'block';
+    }
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Add Bootstrap classes to form fields
+    document.querySelectorAll('select').forEach(select => {
+        select.classList.add('form-select');
+    });
+    document.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(input => {
+        input.classList.add('form-control');
+    });
+    document.querySelectorAll('input[type="file"]').forEach(input => {
+        input.classList.add('form-control');
+    });
+    
+    // Add event listeners to select fields
+    const problemTypeSelect = document.getElementById('id_problem_type');
+    const inputMethodSelect = document.getElementById('id_input_method');
+    
+    if (problemTypeSelect) {
+        problemTypeSelect.addEventListener('change', toggleInputFields);
+    }
+    if (inputMethodSelect) {
+        inputMethodSelect.addEventListener('change', toggleInputFields);
+    }
+    
+    // Initial toggle
+    toggleInputFields();
+});
+</script>
+{% endblock %}
